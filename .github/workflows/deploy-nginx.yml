@@ -7,7 +7,7 @@ on:
 
 env:
   HOST_NAME: ${{ secrets.HAPPY_HOST_NAME }}
-  NGINX_BASE_PATH: '~/projects'
+  NGINX_BASE_PATH: "~/projects/nginx"
 
 jobs:
   deploy:
@@ -24,9 +24,9 @@ jobs:
           host: ${{ secrets.HAPPY_PUBLIC_IP }}
           username: ${{ secrets.HAPPY_HOST_NAME }}
           key: ${{ secrets.HAPPY_PRIVATE_KEY }}
-          source: './'
-          target: /home/${{ secrets.HAPPY_HOST_NAME }}/projects/
-          
+          source: "./"
+          target: /home/${{ secrets.HAPPY_HOST_NAME }}/projects/nginx
+
       # SSH 접속 및 Nginx 컨테이너 재시작
       - name: Restart Nginx Container
         uses: appleboy/ssh-action@v1.2.0
@@ -36,15 +36,13 @@ jobs:
           key: ${{ secrets.HAPPY_PRIVATE_KEY }}
           script: |
             BACKUP_DIR="${{ env.NGINX_BASE_PATH }}/backup"
-            
+
             echo "Creating backup..."
-            
+
             sudo mkdir -p "$BACKUP_DIR/conf.d"
 
-            cd /home/${{ secrets.HAPPY_HOST_NAME }}/projects/
-            
+            cd /home/${{ secrets.HAPPY_HOST_NAME }}/projects/nginx
+
             docker compose up -d --force-recreate nginx
-            
+
             echo "NGINX config updated and container restarted."
-    
-  
