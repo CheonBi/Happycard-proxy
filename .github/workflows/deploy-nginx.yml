@@ -1,0 +1,40 @@
+name: Nginx Config Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+        # SSH 접속 및 파일 동기화
+      - name: Sync Nginx Config to Ubuntu Sever
+        uses: easingthemes/ssh-sync@main
+        with:
+          host: ${{ secrets.HAPPY_PUBLIC_IP }}
+          username: ${{ secrets.HAPPY_HOST_NAME }}
+          ssh_private_key: ${{ secrets.HAPPY_PRIVATE_KEY }}
+          remote_path: /home/${{ secrets.HAPPY_HOST_NAME }}/projects/
+          source_path: './'
+          
+        # SSH 접속 및 Nginx 컨테이너 재시작
+      - name: Restart Nginx Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HAPPY_PUBLIC_IP }}
+          username: ${{ secrets.HAPPY_HOST_NAME }}
+          key: ${{ secrets.HAPPY_PRIVATE_KEY }}
+          script: |
+            cd /home/${{ secrets.HAPPY_HOST_NAME }}/projects/
+            
+            docker-compose up -d --force-recreate nginx
+            
+            echo "NGINX config updated and container restarted."
+    
+  
