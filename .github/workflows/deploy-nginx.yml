@@ -43,7 +43,7 @@ jobs:
 
             cd /home/${{ secrets.HAPPY_HOST_NAME }}/projects/
             
-            docker-compose up -d --force-recreate nginx
+            docker compose up -d --force-recreate nginx
             
             echo "NGINX config updated and container restarted."
     
