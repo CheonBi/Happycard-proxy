@@ -43,7 +43,7 @@ jobs:
 
             cd /home/${{ secrets.HAPPY_HOST_NAME }}/projects/nginx
 
-            docker compose down 
+            docker compose down happycard_proxy
 
             docker compose up -d --force-recreate nginx
 
